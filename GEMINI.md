@@ -1,14 +1,24 @@
 # ClawLike Foundational Mandates
 
-## Core Mission
-Building a complete, autonomous AI agent framework from scratch, inspired by OpenClaw/Moltbot.
 
-## Skills Usage
-- Refer to the instructions, workflows, and tool specifications in the `/skills/` directory for all development tasks.
-- Prioritize the patterns and standards defined in these skills over default behaviors when applicable.
-- Use the specialized skills for messaging integrations (Discord, Telegram, WhatsApp), system automation, and agent reasoning.
+Building a complete, autonomous AI agent framework from scratch, inspired by OpenClaw and Moltbot.
+
+## Technology Stack
+- **Language:** TypeScript / Node.js
+- **Pattern:** Brains and Muscles (separating reasoning from execution via the Model Context Protocol (MCP)).
+- **Interfaces:** CLI-first for core development, adding messaging channels (Discord/Slack/Telegram) as the system stabilizes.
 
 ## Architectural Principles
-- **Brains and Muscles:** Maintain a clear separation between reasoning (Brains) and execution (Muscles).
-- **Heartbeat System:** Implement proactive autonomous tasks via a robust heartbeat/cron mechanism.
-- **Privacy First:** Ensure all data and API keys are handled securely and kept local where possible.
+- **Separation of Concerns:** Reasoning logic (Brains) and tool execution (Muscles) must remain distinct.
+- **Event-Based Heartbeat:** Proactive autonomous tasks are triggered by specific events or schedules.
+- **Hybrid Memory:** Use file-based storage (JSON/Markdown) for session history and local stores (e.g., SQLite) for persistent, learned facts.
+- **Privacy First:** All data, memories, and API keys are kept strictly local.
+
+## Skills Usage
+- Refer to the specialized instructions in the `/skills/` directory for all development, tool integrations, and agent reasoning.
+- Prioritize the patterns defined in these skills (e.g., `brainstorming`, `skill-creator`) over default behaviors.
+
+## Operational Standards
+- Always use the **CLI-first** testing strategy before implementing messaging APIs.
+- Maintain a local **Decision Log** for major architectural shifts.
+- The `skills/` directory and `.env` files are ignored by git; ensure they are maintained locally.

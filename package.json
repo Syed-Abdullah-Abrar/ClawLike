@@ -1,0 +1,37 @@
+{
+  "name": "clawlike",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Syed-Abdullah-Abrar/ClawLike.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Syed-Abdullah-Abrar/ClawLike/issues"
+  },
+  "homepage": "https://github.com/Syed-Abdullah-Abrar/ClawLike#readme",
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@types/node": "^25.5.0",
+    "@types/node-cron": "^3.0.11",
+    "dotenv": "^17.3.1",
+    "node-cron": "^4.2.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
+    "zod": "^4.3.6"
+  },
+  "dependencies": {
+    "@google-cloud/vertexai": "^1.10.4",
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.14.0"
+  }
+}
