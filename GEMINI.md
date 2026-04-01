@@ -21,4 +21,5 @@ Building a complete, autonomous AI agent framework from scratch, inspired by Ope
 ## Operational Standards
 - Always use the **CLI-first** testing strategy before implementing messaging APIs.
 - Maintain a local **Decision Log** for major architectural shifts.
+- Always try to develop TDD(testing driven development cycle)
 - The `skills/` directory and `.env` files are ignored by git; ensure they are maintained locally.
