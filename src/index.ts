@@ -1,12 +1,12 @@
-import { ClawHeartbeat } from "./heartbeat/scheduler.js";
+import { ClawHeartbeat } from "./heartbeat/scheduler";
 
 async function main() {
   console.log("--- 🦞 ClawLike Initialized (CLI-First) ---");
   
   const heartbeat = new ClawHeartbeat();
   
-  // Test task: Autonomous exploration
-  const initialTask = "List all files in the current directory and find if there is any 'tsconfig.json' file.";
+  // Test task: File creation and verification
+  const initialTask = "Create a file named 'hello_claw.txt' with the content 'Agent was here', then list the directory to confirm it exists.";
   
   try {
     await heartbeat.emitTask(initialTask);
