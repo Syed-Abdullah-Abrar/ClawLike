@@ -1,57 +1,52 @@
 import { ClawBrain } from "../brains/engine.js";
-import { ShellMuscle } from "../muscles/base.js";
+import { ShellMuscle } from "../muscles/core/shell_ops.js";
+import { ReadFileMuscle, WriteFileMuscle, ListDirectoryMuscle, SearchFileMuscle } from "../muscles/file/file_ops.js";
+import { RememberMuscle, RecallMuscle } from "../muscles/memory/memory_ops.js";
 
 /**
- * The Heartbeat is the orchestrator for the event-based autonomous cycle.
- * It connects the "Brain" (Reasoning) with the "Muscles" (Execution).
+ * The Heartbeat orchestrates the autonomous loop.
  */
 export class ClawHeartbeat {
   private brain: ClawBrain;
-  private shellMuscle: ShellMuscle;
+  private muscles: Record<string, any>;
 
   constructor() {
     this.brain = new ClawBrain();
-    this.shellMuscle = new ShellMuscle();
+    this.muscles = {
+      shell_execute: new ShellMuscle(),
+      read_file: new ReadFileMuscle(),
+      write_file: new WriteFileMuscle(),
+      list_directory: new ListDirectoryMuscle(),
+      search_file: new SearchFileMuscle(),
+      remember: new RememberMuscle(),
+      recall: new RecallMuscle()
+    };
   }
 
-  /**
-   * Emits a task to the agent and starts the autonomous reasoning loop.
-   */
   async emitTask(task: string) {
-    console.log(`[Heartbeat] 💓 New task received: "${task}"`);
-    
-    let isTaskComplete = false;
+    console.log(`[Heartbeat] 💓 Task: "${task}"`);
     let context = "";
 
-    // Autonomous loop (limited to 5 steps for safety during testing)
-    for (let step = 1; step <= 5 && !isTaskComplete; step++) {
-      console.log(`[Heartbeat] 🧠 Reasoning Step ${step}...`);
+    for (let step = 1; step <= 10; step++) {
+      console.log(`[Heartbeat] 🧠 Step ${step}...`);
       
       const thought = await this.brain.think(task, context);
       console.log(`[Brain Thought]:\n${thought}\n`);
 
-      // Robust logic: if the brain mentions a command in backticks, let's try to execute it
-      const commandMatch = thought.match(/```(?:\w+)?\s*([\s\S]+?)\s*```|`([\s\S]+?)`/);
+      // Try to match tool calls like: tool_name({ "arg": "val" })
+      // Or simple backticks for shell commands
+      const commandMatch = thought.match(/`([^`]+)`/);
       
-      let command = "";
       if (commandMatch) {
-        // Prioritize triple backticks capture group (commandMatch[1])
-        // Fallback to single backticks capture group (commandMatch[2])
-        command = (commandMatch[1] || commandMatch[2] || "").trim();
-        // Sanitize: remove any backticks that the LLM might have included *inside* the command string
-        command = command.replace(/`/g, '');
-      }
-      
-      if (command) { // Only execute if a command was successfully extracted
-        console.log(`[Heartbeat] 💪 Muscle executing: "${command}"`);
-        
-        const result = await this.shellMuscle.run({ command });
-        console.log(`[Muscle Result]:\n${result}\n`);
-        
-        context += `\nStep ${step}: Executed "${command}". Result: ${result}`;
+        const command = commandMatch[1];
+        console.log(`[Heartbeat] 💪 Muscle (Shell): "${command}"`);
+        const result = await this.muscles.shell_execute.run({ command });
+        context += `\nStep ${step}: Ran "${command}". Result: ${result}`;
       } else {
-        console.log(`[Heartbeat] ✅ Task complete or no further actions needed.`);
-        isTaskComplete = true;
+        // Here we'd add logic for tool-calling via JSON if the LLM supports it natively,
+        // but for now we'll stick to basic command extraction.
+        console.log(`[Heartbeat] ✅ Done or No tool found.`);
+        break;
       }
     }
   }
