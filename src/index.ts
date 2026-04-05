@@ -6,7 +6,7 @@ async function main() {
   const heartbeat = new ClawHeartbeat();
   
   // Test task: File creation and verification
-  const initialTask = "Create a file named 'hello_claw.txt' with the content 'Agent was here', then list the directory to confirm it exists.";
+  const initialTask = "Create a file named 'hello_claw_01.txt' with the content 'Agent was here - 01', then list the directory to confirm it exists.";
   
   try {
     await heartbeat.emitTask(initialTask);

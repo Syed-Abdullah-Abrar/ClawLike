@@ -1,7 +1,7 @@
 # ClawLike Foundational Mandates
 
 
-Building a complete, autonomous AI agent framework from scratch, inspired by OpenClaw and Moltbot.
+Building a complete, autonomous AI agent framework from scratch, inspired by OpenClaw/Moltbot.
 
 ## Technology Stack
 - **Language:** TypeScript / Node.js
@@ -23,4 +23,4 @@ Building a complete, autonomous AI agent framework from scratch, inspired by Ope
 - Maintain a local **Decision Log** for major architectural shifts.
 - Always try to develop TDD(testing driven development cycle)
 - The `skills/` directory and `.env` files are ignored by git; ensure they are maintained locally.
-- 
+- At the end of the sessions, update the CLAWLIKE_STRUCTURE.md file.
