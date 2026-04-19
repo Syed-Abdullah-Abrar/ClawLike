@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { ClawMuscle, MuscleDefinition } from "../base";
+import { ClawMuscle } from "../../../shared/base.js";
 
 const execPromise = promisify(exec);
 const PROJECT_ROOT = process.cwd();
@@ -151,7 +151,6 @@ export class SearchFileMuscle extends ClawMuscle {
   async run({ pattern, path: searchPath = "." }: { pattern: string, path?: string }): Promise<string> {
     try {
       const target = validatePath(searchPath);
-      // We use grep -rnE for recursive, line-numbered, extended regex search
       const { stdout } = await execPromise(`grep -rnE "${pattern}" "${target}" --exclude-dir=node_modules`, { shell: '/bin/bash' });
       return stdout || "No matches found.";
     } catch (error: any) {

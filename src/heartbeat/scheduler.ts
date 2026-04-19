@@ -1,23 +1,21 @@
 import { ClawBrain } from "../brains/engine.js";
-import { ShellMuscle } from "../muscles/core/shell_ops.js";
-import { ReadFileMuscle, WriteFileMuscle, ListDirectoryMuscle, SearchFileMuscle } from "../muscles/file/file_ops.js";
-import { RememberMuscle, RecallMuscle } from "../muscles/memory/memory_ops.js";
+import { ClawRegistrar } from "../core/registrar.js";
+import { RememberMuscle, RecallMuscle } from "../core/memory/memory_ops.js";
 
 /**
- * The Heartbeat orchestrates the autonomous loop.
+ * The Heartbeat orchestrates the autonomous loop using the Plugin Registrar.
  */
 export class ClawHeartbeat {
   private brain: ClawBrain;
-  private muscles: Record<string, any>;
+  private registrar: ClawRegistrar;
+  private coreMuscles: Record<string, any>;
 
   constructor() {
     this.brain = new ClawBrain();
-    this.muscles = {
-      shell_execute: new ShellMuscle(),
-      read_file: new ReadFileMuscle(),
-      write_file: new WriteFileMuscle(),
-      list_directory: new ListDirectoryMuscle(),
-      search_file: new SearchFileMuscle(),
+    this.registrar = new ClawRegistrar();
+    
+    // Core muscles that are always available
+    this.coreMuscles = {
       remember: new RememberMuscle(),
       recall: new RecallMuscle()
     };
@@ -30,23 +28,37 @@ export class ClawHeartbeat {
     for (let step = 1; step <= 10; step++) {
       console.log(`[Heartbeat] 🧠 Step ${step}...`);
       
-      const thought = await this.brain.think(task, context);
-      console.log(`[Brain Thought]:\n${thought}\n`);
-
-      // Try to match tool calls like: tool_name({ "arg": "val" })
-      // Or simple backticks for shell commands
-      const commandMatch = thought.match(/`([^`]+)`/);
+      const toolDefs = this.registrar.getToolDefinitions();
+      const pluginPrompts = this.registrar.getCombinedSystemPrompt();
       
-      if (commandMatch) {
-        const command = commandMatch[1];
-        console.log(`[Heartbeat] 💪 Muscle (Shell): "${command}"`);
-        const result = await this.muscles.shell_execute.run({ command });
-        context += `\nStep ${step}: Ran "${command}". Result: ${result}`;
-      } else {
-        // Here we'd add logic for tool-calling via JSON if the LLM supports it natively,
-        // but for now we'll stick to basic command extraction.
-        console.log(`[Heartbeat] ✅ Done or No tool found.`);
-        break;
+      const rawThought = await this.brain.think(task, context, toolDefs, pluginPrompts);
+      
+      try {
+        const response = JSON.parse(rawThought);
+        console.log(`[Brain Thought]: ${response.thought}`);
+
+        if (response.tool_call) {
+          const { tool, args } = response.tool_call;
+          console.log(`[Heartbeat] 💪 Muscle (${tool}):`, args);
+
+          // Check Registrar first, then Core Muscles
+          const muscle = this.registrar.getMuscle(tool) || this.coreMuscles[tool];
+          
+          if (muscle) {
+            const result = await muscle.run(args);
+            context += `\nStep ${step}: Used "${tool}" with ${JSON.stringify(args)}. Result: ${JSON.stringify(result)}`;
+          } else {
+            const error = `Tool "${tool}" not found.`;
+            console.error(`[Heartbeat] ❌ ${error}`);
+            context += `\nStep ${step}: Error - ${error}`;
+          }
+        } else {
+          console.log(`[Heartbeat] ✅ Task completed or no further tools needed.`);
+          break;
+        }
+      } catch (e: any) {
+        console.error("[Heartbeat] ❌ Failed to parse Brain response as JSON:", rawThought);
+        context += `\nStep ${step}: Error parsing tool call.`;
       }
     }
   }

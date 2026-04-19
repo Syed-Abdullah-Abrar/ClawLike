@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 import { promisify } from "util";
-import { ClawMuscle, MuscleDefinition } from "../base";
+import { ClawMuscle } from "../../../shared/base.js";
 
 const execPromise = promisify(exec);
 const PROJECT_ROOT = process.cwd();
@@ -23,7 +23,6 @@ export class ShellMuscle extends ClawMuscle {
 
   async run({ command }: { command: string }): Promise<string> {
     try {
-      // We force the execution directory to PROJECT_ROOT for safety
       const { stdout, stderr } = await execPromise(command, { 
         shell: '/bin/bash', 
         cwd: PROJECT_ROOT 

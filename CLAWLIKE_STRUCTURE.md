@@ -8,40 +8,39 @@ This document tracks the architectural evolution and construction plan for ClawL
 - **Core Principle**: Separation of Reasoning (Brains) and Execution (Muscles).
 
 ## 2. Architectural Blueprint
-### Current Structure (Finalized Step 1-4)
+### Current Structure (Plugin-Based)
 ```text
 /src
-├── brains/
-│   └── engine.ts         (Gemini/Ollama integration)
-├── heartbeat/
-│   └── scheduler.ts      (Autonomous loop orchestration)
-└── muscles/
-    ├── base.ts           (Abstract ClawMuscle & interfaces)
-    ├── core/
-    │   └── shell_ops.ts  (ShellMuscle - Sandboxed)
-    ├── file/
-    │   └── file_ops.ts   (Read, Write, List, Delete, Search - Sandboxed)
-    └── memory/
-        └── memory_ops.ts (Remember, Recall - JSON based)
+├── core/
+│   ├── brain/           (Reasoning & Providers)
+│   ├── memory/          (Persistent JSON storage)
+│   ├── heartbeat/       (Autonomous loop & Orchestration)
+│   └── registrar.ts     (Explicit Plugin Registration)
+├── plugins/
+│   ├── terminal/        (Shell & CLI Tools)
+│   └── filesystem/      (File Read/Write/Search)
+├── shared/
+│   └── base.ts          (Common Interfaces: ClawMuscle, ClawPlugin)
+└── index.ts             (Entry Point)
 ```
 
 ## 3. Construction Steps
 
 | Step | Muscle Group | Objective | Status |
 | :--- | :--- | :--- | :--- |
-| 1 | **Infrastructure** | Refactor `base.ts` to export only base classes; move `ShellMuscle` to `core/`. | ✅ Done |
-| 2 | **File System** | Implement `ReadFile`, `WriteFile`, `ListDirectory` with TDD. | ✅ Done |
-| 3 | **Search** | Implement `SearchFile` (grep-based) muscle. | ✅ Done |
-| 4 | **Memory** | Implement `Remember` and `Recall` muscles (JSON persistence). | ✅ Done |
-| 5 | **Tool Calling** | Refactor Heartbeat to use structured JSON tool calling instead of backtick parsing. | 🔨 Next Up |
-| 6 | **Communication**| Implement `comm_ops.ts` (WhatsApp/Discord/MCP). | ⏳ Pending |
+| 1 | **Infrastructure** | Refactor to Plugin-based architecture with `Registrar`. | ✅ Done |
+| 2 | **Tool Calling** | Implement structured JSON tool calling (Gemini-ready). | ✅ Done |
+| 3 | **Communication**| Implement `comm_ops.ts` (WhatsApp/Discord/MCP). | ⏳ Pending |
+| 4 | **Refinement** | Add specialized tools to Terminal plugin (Tail, Env). | ⏳ Pending |
 
 ## 4. Decision Log
-- **2026-04-02**: Initialized `CLAWLIKE_STRUCTURE.md` to offload documentation from `GEMINI.md`.
 - **2026-04-02**: Decided on a **Categorized** modular structure for Muscles.
-- **2026-04-05**: Implemented **Strict Sandboxing** for Shell and File muscles using `process.cwd()` and path validation.
-- **2026-04-05**: Verified full autonomous loop: Brain successfully creates and verifies files via Heartbeat orchestration.
-- **2026-04-05**: (Code Review) Identified backtick parsing as a bottleneck. Decided to transition to structured JSON tool calling to enable multi-tool selection (beyond just shell_execute).
+- **2026-04-05**: Implemented **Strict Sandboxing** for Shell and File muscles.
+- **2026-04-19**: **Major Refactor**: Transitioned to **Option C (Plugin/Adapter Architecture)**.
+    - **Hybrid Plugins**: Plugins now export both code (Muscles) and metadata (System Prompt fragments).
+    - **Explicit Registration**: Switched to a `Registrar` pattern for stability and "Single Source of Truth."
+    - **JSON Tool Calling**: Deprecated backtick parsing in favor of structured JSON (`{"tool": "...", "args": {...}}`).
+    - **Core Memory**: Solidified Memory as a Core service rather than an optional plugin to ensure consistency.
 
 ## 5. Non-Functional Requirements
 - **Reliability**: Every muscle must have an associated test file in `tests/`. (Currently: `file_ops.test.ts`, `shell_ops.test.ts`).

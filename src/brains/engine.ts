@@ -41,7 +41,7 @@ export class ClawBrain {
   private genAI: GoogleGenerativeAI;
   private model: GenerativeModel;
 
-  constructor(modelName: string = "gemini-2.5-flash") {
+  constructor(modelName: string = "gemini-1.5-flash") {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error("GEMINI_API_KEY not found in environment variables.");
@@ -54,13 +54,28 @@ export class ClawBrain {
   /**
    * Generates a "thought" based on the current context using the Gemini API.
    */
-  async think(prompt: string, context: string = ""): Promise<string> {
+  async think(prompt: string, context: string = "", tools: any[] = [], pluginPrompts: string = ""): Promise<string> {
     const systemPrompt = `
       You are the "Brain" of ClawLike, an autonomous AI agent framework.
       Your goal is to reason through tasks and decide which "Muscles" (tools) to use.
-      If you need to run a command, provide it inside single backticks like this: \`ls -la\`.
 
-      Current Context:
+      You MUST respond in the following JSON format:
+      {
+        "thought": "Your reasoning here",
+        "tool_call": {
+          "tool": "tool_name",
+          "args": { ... }
+        }
+      }
+      If you are finished or no tool is needed, set tool_call to null.
+
+      AVAILABLE TOOLS:
+      ${JSON.stringify(tools, null, 2)}
+
+      PLUGIN INSTRUCTIONS:
+      ${pluginPrompts}
+
+      CURRENT CONTEXT:
       ${context}
     `;
 
@@ -69,10 +84,9 @@ export class ClawBrain {
       const response = await result.response;
       const text = response.text();
 
-      if (!text) {
-        throw new Error("Empty response from Gemini API.");
-      }
-      return text;
+      // Ensure we extract only the JSON part if the LLM adds markdown blocks
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      return jsonMatch ? jsonMatch[0] : text;
     } catch (error: any) {
       console.error("Gemini reasoning failed:", error.message);
       throw error;

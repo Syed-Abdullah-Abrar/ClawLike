@@ -9,10 +9,12 @@ Building a complete, autonomous AI agent framework from scratch, inspired by Ope
 - **Interfaces:** CLI-first for core development, adding messaging channels (Discord/Slack/Telegram) as the system stabilizes.
 
 ## Architectural Principles
-- **Separation of Concerns:** Reasoning logic (Brains) and tool execution (Muscles) must remain distinct.
+- **Separation of Concerns:** Reasoning logic (Brains) and tool execution (Muscles) remain distinct.
+- **Plugin-Based Extensibility:** All capabilities (Terminal, Filesystem) are self-contained plugins under `src/plugins/`.
+- **Explicit Registration:** All active plugins must be manually registered in `src/core/registrar.ts` for stability.
+- **Structured Tool Calling:** Communication between Brain and Heartbeat is strictly JSON-based.
 - **Event-Based Heartbeat:** Proactive autonomous tasks are triggered by specific events or schedules.
-- **Hybrid Memory:** Use file-based storage (JSON/Markdown) for session history and local stores (e.g., SQLite) for persistent, learned facts.
-- **Privacy First:** All data, memories, and API keys are kept strictly local.
+- **Core Memory:** Persistent memory is a core service to ensure the agent maintains a stable identity and history.
 
 ## Skills Usage
 - Refer to the specialized instructions in the `/skills/` directory for all development, tool integrations, and agent reasoning.

@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import { ClawMuscle } from "../base";
+import { ClawMuscle } from "../../shared/base.js";
 
 const MEMORY_FILE = path.join(process.cwd(), "config/memory.json");
 
