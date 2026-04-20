@@ -16,20 +16,31 @@ To provide a structured, non-ambiguous communication layer between the **Planner
 - **Start Remote (Handoff)**: `npm start -- --mode=handoff`
 
 ## Project Structure
-- `src/core/`: The engine (Brain, Heartbeat, Registrar, Memory, SecurityBroker).
-- `src/plugins/`: Self-contained capabilities (terminal, filesystem, discord).
-- `src/shared/`: Base interfaces (`base.ts`).
-- `CLAW_CONSTRUCTION_PROTOCOL.md`: The active task handoff file.
-- `IMPLEMENTATION_PLAN.md`: The long-term roadmap.
-- `DEVELOPMENT_LOG.md`: The history of changes.
+```text
+/src
+├── core/
+│   ├── brain/           (Reasoning & Providers)
+│   ├── memory/          (Persistent JSON storage)
+│   ├── heartbeat/       (Autonomous loop & Orchestration)
+│   └── registrar.ts     (Explicit Plugin Registration)
+├── plugins/
+│   ├── terminal/        (Shell & CLI Tools)
+│   └── filesystem/      (File Read/Write/Search)
+├── shared/
+│   └── base.ts          (Common Interfaces: ClawMuscle, ClawPlugin)
+└── index.ts             (Entry Point)
+```
 
-## Code Style
-- **Standard**: Clean, modular TypeScript.
-- **Rules**:
-    - Every Muscle must extend `ClawMuscle`.
-    - Every Plugin must have an `index.ts` manifest.
-    - No direct shell calls outside of `ShellMuscle`.
-    - Use `console.log` with prefixes: `[Heartbeat]`, `[Brain]`, `[Registrar]`.
+## Architectural Evolution (Decision Log)
+- **2026-04-02**: Decided on a **Categorized** modular structure for Muscles.
+- **2026-04-19**: **Major Refactor**: Transitioned to **Option C (Plugin/Adapter Architecture)**.
+    - **Hybrid Plugins**: Muscles + Metadata.
+    - **Explicit Registration**: Centralized in `registrar.ts`.
+    - **JSON Tool Calling**: Standardized protocol.
+- **2026-04-19**: **Trinity Implementation**: Added Claude as Auditor and Aider as Engineer.
+
+## Code Style & Role Boundaries
+... (rest of the file)
 
 ## Testing Strategy
 - **Unit Tests**: Every new muscle must have a `.test.ts` file in `tests/`.
@@ -40,7 +51,15 @@ To provide a structured, non-ambiguous communication layer between the **Planner
 - **Ask First**: Before adding any new external npm dependencies.
 - **Never**: Commit `.env` files or hardcode API keys. Never bypass the `SecurityBroker` for shell commands.
 
-## Success Criteria (The Bridge Lock)
-- Gemini (Planner) identifies a task and writes the requirements to the "Active Sprint" section of `CLAW_CONSTRUCTION_PROTOCOL.md`.
-- Claude (Builder) reads the spec, implements the code, verifies with tests, and moves the task to "Completed" in `DEVELOPMENT_LOG.md`.
-- A task is only "Done" when the `SecurityBroker` successfully intercepts and grants permission for the new functionality.
+## Success Criteria (The Trinity Lock)
+- **Phase 1: Planning**. Gemini creates `SPEC.md`. Builder cannot start until `SPEC.md` exists.
+- **Phase 2: Building**. Aider implements in Loops 1-3. 
+- **Phase 3: Auditing**. Claude supervises and directs Aider in Loops 4-7.
+- **Phase 4: Finality**. At Loop 8, Claude presents the `REVIEW.md`.
+- **Phase 5: Human Approval**. Work is only "Done" when the Human gives a Green Flag. Claude then generates the commit message.
+
+## Code Style & Role Boundaries
+- **Gemini**: Specification-only (Markdown).
+- **Aider**: Implementation-only (TypeScript).
+- **Claude**: Verification-only (Audit Reports).
+- **Synchronization**: All agents MUST reference the `AIDER_checkpoint.md` for current session state.

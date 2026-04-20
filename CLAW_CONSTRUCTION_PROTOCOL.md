@@ -27,12 +27,13 @@ Transitioning ClawLike into a modular, plugin-based autonomous agent framework i
 ## 📜 Official Specification
 Refer to `SPEC_CLAWLIKE_BRIDGE.md` for full architectural mandates and code standards.
 
-## 🛠️ Active Sprint: "Phase 1 - State Machine Foundation"
-The Builder should now focus on:
-1. **Task 1: Core State Definition.** Update `src/heartbeat/scheduler.ts` (ClawHeartbeat) to support a `State` enum (IDLE, ASSISTING, BUILDING, AWAITING_PERMISSION).
-2. **Task 2: Mode Implementation.** Add a `mode` flag to the heartbeat (default: 'precision') that toggles the loop behavior.
+## 🛠️ Active Sprint: "Phase 1 - Trinity Infrastructure"
+The Builder (Aider/Claude) should now focus on:
+1. **Implementation of the Trinity Heartbeat**: Update `src/heartbeat/scheduler.ts` to support the 8-loop cycle and the state transitions defined in `SOUL.md`.
+2. **Loop Logger**: Create the mechanism to log achievements for each of the 8 loops in `DEVELOPMENT_LOG.md`.
 
 ## 📢 Handoff State (April 19, 2026)
-- **Status**: Planning Phase Complete.
-- **Next Action**: Builder to implement the State Machine in the Heartbeat.
-- **Critical Path**: Ensure the loop respects the 'Precision' mode by pausing for input.
+- **Status**: Trinity Design Lock Complete.
+- **Next Action**: Builder to implement the 8-loop logic in the Core Heartbeat.
+- **Critical Path**: Ensure Claude (Auditor) can correctly "pause" the loop at Step 8 for Human approval.
+

@@ -1,36 +1,34 @@
-# Implementation Plan: ClawLike Dual-Drive Orchestrator
+# Implementation Plan: ClawLike Trinity Orchestrator
 
 ## Overview
-Transforming ClawLike from a linear autonomous loop into a state-aware orchestrator that supports **Precision Pair-Programming (Local)** and **Handoff Autonomous Building (Remote/Discord)**. It uses a "Planner-Builder" separation to allow Gemini to plan and Claude to execute via a standardized Bridge protocol.
+Transforming ClawLike into a high-integrity "Agent Agency." We are moving beyond a simple Planner-Builder model to a **Trinity (Gemini, Aider, Claude)** system with an 8-loop refinement cycle, supervised by Claude and governed by the `SOUL.md`.
 
 ## Architecture Decisions
-- **State Machine Integration**: `ClawHeartbeat` will manage states: `IDLE`, `ASSISTING` (Precision), `BUILDING` (Handoff), and `AWAITING_PERMISSION`.
-- **Mode Toggle**: A new "Mode" flag will determine if the loop pauses for human confirmation (Precision) or proceeds autonomously (Handoff).
-- **The Bridge Protocol**: `CLAW_CONSTRUCTION_PROTOCOL.md` will be the living document that handsoff tasks between Gemini (Planner) and Claude (Builder).
-- **Security Broker**: A central `PermissionManager` core service that interrupts risky tool calls until approved via CLI or Discord.
+- **The Trinity Roles**: 
+    - **Planner (Gemini)**: Architects the `SPEC.md`. 
+    - **Builder (Aider)**: Executes surgical file edits. 
+    - **Auditor (Claude)**: Supervises Aider and gates the quality.
+- **8-Loop Cycle**: The `Heartbeat` now manages 8 distinct loops of thinking/building/auditing.
+- **The Soul Protocol**: A mandatory `SOUL.md` that prevents role-overlap.
+- **Human-in-the-loop Finality**: Agents stop at Loop 8; Human toggles "Review Mode" to Green/Red flag.
 
 ## Task List
 
-### Phase 1: State Machine & Mode Foundation
-- [ ] **Task 1: Core State Definition.** Update `ClawHeartbeat` to support the new state enum and "Precision vs Handoff" mode flags.
-- [ ] **Task 2: Precision Mode Loop.** Refactor the heartbeat loop to pause and wait for user input (CLI) after every "Thought" when in Precision mode.
-- [ ] **Task 3: Permission Interceptor.** Implement a basic `SecurityBroker` in `src/core/` that can "Hold" a tool call until a `grant()` method is called.
+### Phase 1: The Trinity Infrastructure
+- [ ] **Task 1: The SOUL.md Creation.** Define the rigid behavioral boundaries for Gemini, Aider, and Claude.
+- [ ] **Task 2: Trinity Bridge Refactor.** Update `SPEC_CLAWLIKE_BRIDGE.md` to define the 8-loop protocol and agent handoffs.
+- [ ] **Task 3: Heartbeat State Machine (v2).** Update `scheduler.ts` to manage the transition through 8 specific loops.
 
-### Phase 2: The Bridge & Planner Logic
-- [ ] **Task 4: Planner System Prompt.** Update Gemini's system prompt in `src/core/brain/engine.ts` to explicitly act as an "Architect/Planner" that writes to the Bridge file.
-- [ ] **Task 5: Bridge Protocol Implementation.** Create the `src/core/bridge_ops.ts` to manage reading/writing the `CLAW_CONSTRUCTION_PROTOCOL.md` programmatically.
+### Phase 2: Loop Achievement & Logging
+- [ ] **Task 4: Loop Specialist Definitions.** Assign specific achievements to each loop (e.g., Loop 5 = "Security/Refactor Scan").
+- [ ] **Task 5: Sequential Loop Logger.** Update `DEVELOPMENT_LOG.md` to track what happens in every one of the 8 loops.
 
-### Phase 3: The Discord Cockpit (Remote Control)
-- [ ] **Task 6: Discord Plugin Foundation.** Build `src/plugins/discord/` to handle the bot login and basic message routing.
-- [ ] **Task 7: Remote Permission Broker.** Connect the `SecurityBroker` to Discord, allowing approvals via button clicks.
-- [ ] **Task 8: Handoff Mode Activation.** Enable the full autonomous loop for Discord-initiated tasks.
+### Phase 3: The Auditor's Gate (Claude)
+- [ ] **Task 6: Supervisory Prompting.** Build the logic for Claude to "tell Aider" what to fix if an audit fails during loops 4-7.
+- [ ] **Task 7: The Final Commit Muscle.** Implement Claude's specialized tool to write the commit message post-Human Approval.
 
 ## Risks and Mitigations
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Context Drift | High | Ensure Gemini writes extremely detailed implementation specs in the Bridge. |
-| File Collision | Med | Implement a simple file lock or state check if both modes are active. |
-| Discord Latency | Low | Use asynchronous event emitters for tool call status updates. |
-
-## Open Questions
-- Should the "Precision Mode" have a live file-watcher to update the Brain automatically when the user edits a file?
+| Loop Exhaustion | Med | Allow Claude to "Early Exit" if the code is 100% perfect by Loop 4. |
+| Role Overlap | High | Strict enforcement via `SOUL.md` system prompts. |

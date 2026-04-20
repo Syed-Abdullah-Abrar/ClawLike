@@ -20,9 +20,9 @@ We follow a strict "Bridge" protocol to ensure the Architect and the Builder sta
 
 ### 📁 Temporary Synchronization Files
 These files serve as the live "Bridge" between agents and will be removed upon project completion:
-- `GEMINI.md`: Architect Identity & Mandates.
-- `SPEC_CLAWLIKE_BRIDGE.md`: Technical Specification & Boundaries.
-- `CLAW_CONSTRUCTION_PROTOCOL.md`: Active Task Handoff & Sync Logic.
+- `SOUL.md`: Agent Trinity Identities, Boundaries, and Loop Cycle.
+- `SPEC_CLAWLIKE_BRIDGE.md`: Technical Specification, Structure, and Decision Log.
+- `CLAW_CONSTRUCTION_PROTOCOL.md`: Active Task Handoff & Sync Protocol.
 - `IMPLEMENTATION_PLAN.md`: Strategic Roadmap.
 - `DEVELOPMENT_LOG.md`: Real-time Construction Journal.
 
